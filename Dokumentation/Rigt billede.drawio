@@ -409,7 +409,7 @@
                 <mxCell id="ZyHTbxsWpKYUHgTLR_B4-156" value="River: Der tilføjes et ekstra kort til fælles kortene." style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;rounded=1;fontSize=10;align=center;position2=0.74;" parent="1" vertex="1">
                     <mxGeometry x="-748.7" y="700" width="120" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="ZyHTbxsWpKYUHgTLR_B4-157" value="Nu har man mulighed for at call, raise eller fold. hvis der er mere end 1 spiller tilbage efter betting&amp;nbsp; runden, viser de sidste spillere deres kort." style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;rounded=1;fontSize=10;align=center;position2=0.39;" parent="1" vertex="1">
+                <mxCell id="ZyHTbxsWpKYUHgTLR_B4-157" value="Nu har man mulighed for at call, raise eller fold. hvis der er mere end en spiller tilbage efter betting&amp;nbsp; runden, viser de sidste spillere deres kort." style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;rounded=1;fontSize=10;align=center;position2=0.39;" parent="1" vertex="1">
                     <mxGeometry x="-183.78" y="700" width="161.78" height="90" as="geometry"/>
                 </mxCell>
                 <mxCell id="ZyHTbxsWpKYUHgTLR_B4-158" value="Spilleren med den bedste hånd vinder runden" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;rounded=1;fontSize=10;align=center;position2=0.74;" parent="1" vertex="1">
