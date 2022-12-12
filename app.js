@@ -24,3 +24,4 @@ app.get('/api/test', (req, res) => {
 // Mix cards with (random number. Not the normal random!)
 // Add cards to stack.
 //test
+//new test
