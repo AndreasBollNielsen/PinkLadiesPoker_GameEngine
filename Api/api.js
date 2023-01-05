@@ -21,7 +21,7 @@ encryption.CreateAES();
 // only for testing puposes.
 const {publicKey, privateKey} = crypto.generateKeyPairSync("rsa",{modulusLength: 2048});
 
-//endpoints
+//Get AES keys
 app.get('/api/GetAES', async (req,res) => {
 
     const key = req.body.publicKey;
