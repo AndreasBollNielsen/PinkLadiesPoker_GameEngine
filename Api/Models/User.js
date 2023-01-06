@@ -10,3 +10,5 @@ let User = class{
     }
 }
 
+module.exports = User;
+

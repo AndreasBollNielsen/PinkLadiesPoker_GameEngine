@@ -1,27 +1,44 @@
-
-pokerTable = {};
-
-let users =[];
-let bets =[];
-let collectiveCards =[];
-let cardDeck =[];
-
-pokerTable.UpdateUserState = (action,value) =>{
+const CleaningLady = require('./CleaningLady');
+let PokerTable = class{
 
     
-}
+     users =[];
+     bets =[];
+     collectiveCards =[];
+     cardDeck =[];
 
-pokerTable.LeavePokerTable = (userID) =>{
+     constructor(){
 
+     };
     
-}
-
-pokerTable.AddToPokerTable = (user) =>{
-
+     UpdateUserState = (action,value) =>{
+        
+        
+    }
     
-}
+    LeavePokerTable = (userID) =>{
+        
+        
+    }
+    
+    AddToPokerTable = (user) =>{
+        
+        
+    }
 
+    VerifyOrKickPlayer = () =>{
+        
+        for (let index = 0; index < users.length; index++) {
+           
+            //kick player
+            if(users[index].Saldo ===0)
+            {
 
+            }
+            
+        }
+    }
+    
+};
 
-module.exports = pokerTable;
-export {users,bets,collectiveCards,cardDeck}
+module.exports = PokerTable;
