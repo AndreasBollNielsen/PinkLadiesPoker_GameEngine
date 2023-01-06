@@ -17,35 +17,80 @@ const FACES = [
 const SUITS = ["H", "D", "C", "S"];
 
 ruleManager.CompareHands = (pokerTable) => {
-  pokerTable.collectiveCards;
-
+  
   //temporary array of cards from
-  let tempHands = [];
-
+  let playerHands = [];
+//  console.log("pokertable: ", pokerTable);
+  
   //Adding playerhands to temp array
   for (let i = 0; i < pokerTable.users.length; i++) {
-    let userTempcards = pokerTable.users.PocketCards;
+    let userTempcards = [];
+    userTempcards = pokerTable.users[i].PocketCards;
+    
+    //console.log("pokerTable collectivecards: ", pokerTable.collectiveCards);
+    
+    userTempcards.push(...pokerTable.collectiveCards);
+    //console.log("userTempcards: ", userTempcards);
+    let userData = { tempHands: userTempcards, cardResult: { handName: "", handValue: 0, shift: 0 }  };
+    playerHands.push(userData);
 
-    userTempcards.concat(pokerTable.collectiveCards);
-    let userData = { 'tempHands': userTempcards, 'cardResult': '' };
-    tempHands.push(userData);
+    //console.log("user data: ", userData);
   }
 
+  for (let i = 0; i < playerHands.length; i++) {
+   // console.log("temp hands: ", playerHands[i].tempHands);
+    let result = ruleManager.analyzeHand(playerHands[i].tempHands);
+    playerHands[i].cardResult = result;
 
-
-  for (let i = 0; i < tempHands.length; i++) {
-    let result = ruleManager.analyzeHand(tempHands[i].tempHands);
-    tempHands[i].cardResult = result;
+    console.log("cardresult: ", playerHands[i].cardResult);
   }
 
-  //-----------------------------------------------------------------------
-  //Her fortsætter vi med at analyserer hænder værdier og sammenligne dem.
-  //-----------------------------------------------------------------------
+  //step one, go through all players and return an array containing the users with the highest hand value 0-10
+  let highestHands=[]
+  highestHands.push(playerHands[0]);
+  
+  for (let i = 0; i < playerHands.length; i++) {
+
+   // console.log("outer loop playerhands: ", playerHands[i].cardResult.handValue)
+   
+        for (let j = 0; j < highestHands.length; j++) {
+          
+          console.log("player hand value: ", playerHands[i].cardResult.handValue)
+         // console.log("heighest hand value: ", highestHands[j].cardResult.handValue)
+
+
+          if ( playerHands[i].cardResult.handValue > highestHands[j].cardResult.handValue) {
+
+          //  console.log("this is larger: ", playerHands[i].cardResult.handValue);
+
+            highestHands.splice(j, 1, playerHands[i]);
+
+           // console.log(highestHands.length);
+          }
+         if ( playerHands[i].cardResult.handValue == highestHands[j].cardResult.handValue) {
+
+            console.log("this is equal: "+ playerHands[i].cardResult.handValue + " / " + highestHands[j].cardResult.handValue + " index: " + i);
+
+           // highestHands.push(playerHands[i]);
+
+            //console.log(highestHands.length);
+          }
+        }
+
+     
+    
+  }
+  console.log("highest cards", highestHands);
+  
+  //step two, iterate new array and check if more than one user has same value card.
+
+  // step 3 use shift to sort which user has the best cards.
+
+  //step 4 return the users with the highest card value and highest shift.
 };
 
 ruleManager.analyzeHand = (hand) => {
-
-
+  console.log("hand: ",hand);
   let faces = hand.map((card) => FACES.indexOf(card.slice(0, -1)));
   let suits = hand.map((card) => SUITS.indexOf(card.slice(-1)));
 
@@ -67,26 +112,39 @@ ruleManager.analyzeHand = (hand) => {
   );
 
   // finally, if index 0 has value 1 and  the distance is less than 5 straight is true.
+  console.log("distance: ", distance);
   let straight = groups[0] === 1 && distance < 5;
 
   console.log("groups: ", groups);
-  console.log("shifted: ", shifted[4]);
-
-
-
+  console.log("shifted[0]: ", shifted[0]);
+  console.log("shifted[1]: ", shifted[1]);
+  console.log("shifted[2]: ", shifted[2]);
+  console.log("shifted[3]: ", shifted[3]);
+  console.log("shifted[4]: ", shifted[4]);
+  console.log("shifted[5]: ", shifted[5]);
+  console.log("shifted[6]: ", shifted[6]);
 
   //analysing hand, returns string with hand title
-  let result = (straight && flush && (shifted[4] === 0)) ? { 'handName': "Royal-straight-flush", 'handValue': 10 }
-    : (straight && flush) ? { 'handName': "straight-flush", 'handValue': 9 }
-      : (groups[0] === 4) ? { 'handName': "four-of-a-kind", 'handValue': 8 }
-        : (groups[0] === 3 && groups[1] === 2) ? { 'handName': "full-house", 'handValue': 7 }
-          : (flush) ? { 'handName': "flush", 'handValue': 6 }
-            : (straight) ? { 'handName': "straight", 'handValue': 5 }
-              : (groups[0] === 3) ? { 'handName': "three-of-a-kind", 'handValue': 4 }
-                : (groups[0] === 2 && groups[1] === 2) ? { 'handName': "two-pair", 'handValue': 3 }
-                  : (groups[0] === 2) ? { 'handName': "one-pair", 'handValue': 2 }
-                    : { 'handName': "high-card", 'handValue': 1 };
-
+  let result =
+    straight && flush && shifted[4] === 0
+      ? { handName: "Royal-straight-flush", handValue: 10, shift: shifted }
+      : straight && flush
+      ? { handName: "straight-flush", handValue: 9, shift: shifted }
+      : groups[0] === 4
+      ? { handName: "four-of-a-kind", handValue: 8, shift: shifted }
+      : groups[0] === 3 && groups[1] === 2
+      ? { handName: "full-house", handValue: 7, shift: shifted }
+      : flush
+      ? { handName: "flush", handValue: 6, shift: shifted }
+      : straight
+      ? { handName: "straight", handValue: 5, shift: shifted }
+      : groups[0] === 3
+      ? { handName: "three-of-a-kind", handValue: 4, shift: shifted }
+      : groups[0] === 2 && groups[1] === 2
+      ? { handName: "two-pair", handValue: 3, shift: shifted }
+      : groups[0] === 2
+      ? { handName: "one-pair", handValue: 2, shift: shifted }
+      : { handName: "high-card", handValue: 1, shift: shifted };
 
   // console.log(result);
   return result;
@@ -114,11 +172,7 @@ ruleManager.analyzeHand = (hand) => {
   //   result = "high-card";
   // }
   // return result;
-
-}
-
-
-
+};
 
 // let testHands = [
 // 	let hand= ["2♥", "2♦", "2♣", "k♣", "q♦"]
