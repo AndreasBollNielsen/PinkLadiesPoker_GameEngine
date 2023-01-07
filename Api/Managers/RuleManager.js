@@ -17,28 +17,30 @@ const FACES = [
 const SUITS = ["H", "D", "C", "S"];
 
 ruleManager.CompareHands = (pokerTable) => {
-  
   //temporary array of cards from
   let playerHands = [];
-//  console.log("pokertable: ", pokerTable);
-  
+  //  console.log("pokertable: ", pokerTable);
+
   //Adding playerhands to temp array
   for (let i = 0; i < pokerTable.users.length; i++) {
     let userTempcards = [];
     userTempcards = pokerTable.users[i].PocketCards;
-    
+
     //console.log("pokerTable collectivecards: ", pokerTable.collectiveCards);
-    
+
     userTempcards.push(...pokerTable.collectiveCards);
     //console.log("userTempcards: ", userTempcards);
-    let userData = { tempHands: userTempcards, cardResult: { handName: "", handValue: 0, shift: 0 }  };
+    let userData = {
+      tempHands: userTempcards,
+      cardResult: { handName: "", handValue: 0, shift: 0 },
+    };
     playerHands.push(userData);
 
     //console.log("user data: ", userData);
   }
 
   for (let i = 0; i < playerHands.length; i++) {
-   // console.log("temp hands: ", playerHands[i].tempHands);
+    // console.log("temp hands: ", playerHands[i].tempHands);
     let result = ruleManager.analyzeHand(playerHands[i].tempHands);
     playerHands[i].cardResult = result;
 
@@ -46,56 +48,90 @@ ruleManager.CompareHands = (pokerTable) => {
   }
 
   //step one, go through all players and return an array containing the users with the highest hand value 0-10
-  let highestHands=[]
-  highestHands.push(playerHands[0]);
+  let highestHands = [];
+
   
+ highestHands.push(playerHands[0])
+
   for (let i = 0; i < playerHands.length; i++) {
-
-   // console.log("outer loop playerhands: ", playerHands[i].cardResult.handValue)
-   
-        for (let j = 0; j < highestHands.length; j++) {
-          
-          console.log("player hand value: ", playerHands[i].cardResult.handValue)
-         // console.log("heighest hand value: ", highestHands[j].cardResult.handValue)
-
-
-          if ( playerHands[i].cardResult.handValue > highestHands[j].cardResult.handValue) {
-
-          //  console.log("this is larger: ", playerHands[i].cardResult.handValue);
-
-            highestHands.splice(j, 1, playerHands[i]);
-
-           // console.log(highestHands.length);
-          }
-         if ( playerHands[i].cardResult.handValue == highestHands[j].cardResult.handValue) {
-
-            console.log("this is equal: "+ playerHands[i].cardResult.handValue + " / " + highestHands[j].cardResult.handValue + " index: " + i);
-
-           // highestHands.push(playerHands[i]);
-
-            //console.log(highestHands.length);
-          }
-        }
-
-     
     
-  }
-  console.log("highest cards", highestHands);
+    for (let j = 0; j < highestHands.length; j++) {
+    
+
+      if ((i == 0) && playerHands[i].cardResult.handValue == highestHands[j].cardResult.handValue) {
+
+        console.log("replacing first straight");
+      highestHands = [];
+        highestHands.push(playerHands[i]);
+        
+        //console.log(highestHands.length);
+      }
+
+      else if ((i != 0) && playerHands[i].cardResult.handValue == highestHands[j].cardResult.handValue) {
+
+        if(playerHands[i].tempHands != highestHands[j].tempHands)
+        {
+
+          console.log("adding straight");
+          highestHands.push(playerHands[i]);
+        }
+       j++;
+        //console.log(highestHands.length);
+      }
+      else if (playerHands[i].cardResult.handValue > highestHands[j].cardResult.handValue) {
+        //  console.log("this is larger: ", playerHands[i].cardResult.handValue);
+          console.log("replacing");
+        highestHands = [];
+        highestHands.push(playerHands[i]);
+
+        // console.log(highestHands.length);
+      }
+
+      
+
+      
+    }
   
+  };
+
+    console.log("highest hands", highestHands);
+    console.log(" temphands: ", highestHands.length);
+};
   //step two, iterate new array and check if more than one user has same value card.
 
   // step 3 use shift to sort which user has the best cards.
 
   //step 4 return the users with the highest card value and highest shift.
-};
+
 
 ruleManager.analyzeHand = (hand) => {
-  console.log("hand: ",hand);
+ // console.log("hand: ", hand);
   let faces = hand.map((card) => FACES.indexOf(card.slice(0, -1)));
   let suits = hand.map((card) => SUITS.indexOf(card.slice(-1)));
 
   //calcaulating flush by comparing if all index is same value
-  let flush = suits.every((suit) => suit === suits[0]);
+ // let flush = suits.every((suit) => suit === suits[0]);
+  
+
+ //------------------------------------------------
+ //FlushCalculator
+ //------------------------------------------------
+flush = flushCalculator();
+function flushCalculator(){
+  let uniqueSuits = [...new Set(suits)];
+  const suitCounts = uniqueSuits.map(suitValue => [suitValue, suits.filter(suit => suit === suitValue).length]);
+  
+  for (let i = 0; i < suitCounts.length; i++) {
+    if (suitCounts[i][1] >= 5) {
+      console.log("we got a flush!");
+      return true;
+    }
+  }
+}
+//------------------------------------------------
+//------------------------------------------------
+
+
 
   //Counting grouped cards of same faces. Creates a shallow copy of FACES array and grouping by value, from index 0
   let groups = FACES.map((face, i) => faces.filter((j) => i === j).length).sort(
@@ -111,11 +147,44 @@ ruleManager.analyzeHand = (hand) => {
     Math.max(...shifted) - Math.min(...shifted)
   );
 
+  //-------------------------------------------------
+  //Counting straight
+  //-------------------------------------------------
+  shifted.sort(function (a, b) {
+    return a - b;
+  });
+  //console.log("ascending order: ", shifted);
+
+  let counter = 0;
+  for (let i = 0; i < shifted.length; i++) {
+    let currentValue = shifted[i];
+    let nextValue = shifted[i + 1];
+    if (nextValue == currentValue + 1) {
+      counter++;
+    }
+    if (counter >= 5) {
+     // console.log("We have a straight right here in nomans land");
+    }
+  }
+  let highestStraight = false;
+  if (shifted[6] == 12 && shifted[0] == 0 && counter >= 4) {
+    highestStraight = true;
+    //then straight
+    console.log("straight!");
+  }
+
+  //-------------------------------------------------
+  //-------------------------------------------------
+
   // finally, if index 0 has value 1 and  the distance is less than 5 straight is true.
   console.log("distance: ", distance);
-  let straight = groups[0] === 1 && distance < 5;
+
+  // let straight = groups[0] === 1 && distance < 5;
+  let straight =
+    (groups[0] > 0 && groups[0] < 4 && counter >= 5) || highestStraight;
 
   console.log("groups: ", groups);
+
   console.log("shifted[0]: ", shifted[0]);
   console.log("shifted[1]: ", shifted[1]);
   console.log("shifted[2]: ", shifted[2]);
