@@ -36,7 +36,7 @@ ruleManager.CompareHands = (pokerTable) => {
     };
     playerHands.push(userData);
 
-    //console.log("user data: ", userData);
+    console.log("user data: ", userData);
   }
 
   for (let i = 0; i < playerHands.length; i++) {
@@ -44,94 +44,107 @@ ruleManager.CompareHands = (pokerTable) => {
     let result = ruleManager.analyzeHand(playerHands[i].tempHands);
     playerHands[i].cardResult = result;
 
-    console.log("cardresult: ", playerHands[i].cardResult);
+    // console.log("cardresult: ", playerHands[i].cardResult);
   }
 
   //step one, go through all players and return an array containing the users with the highest hand value 0-10
   let highestHands = [];
 
-  
- highestHands.push(playerHands[0])
+  highestHands.push(playerHands[0]);
 
   for (let i = 0; i < playerHands.length; i++) {
-    
     for (let j = 0; j < highestHands.length; j++) {
-    
-
-      if ((i == 0) && playerHands[i].cardResult.handValue == highestHands[j].cardResult.handValue) {
-
-        console.log("replacing first straight");
-      highestHands = [];
+      if (
+        i == 0 &&
+        playerHands[i].cardResult.handValue ==
+          highestHands[j].cardResult.handValue
+      ) {
+        // console.log("replacing first straight");
+        highestHands = [];
         highestHands.push(playerHands[i]);
-        
+
         //console.log(highestHands.length);
-      }
-
-      else if ((i != 0) && playerHands[i].cardResult.handValue == highestHands[j].cardResult.handValue) {
-
-        if(playerHands[i].tempHands != highestHands[j].tempHands)
-        {
-
-          console.log("adding straight");
+      } else if (
+        i != 0 &&
+        playerHands[i].cardResult.handValue ==
+          highestHands[j].cardResult.handValue
+      ) {
+        if (playerHands[i].tempHands != highestHands[j].tempHands) {
+          //  console.log("adding straight");
           highestHands.push(playerHands[i]);
         }
-       j++;
+        j++;
         //console.log(highestHands.length);
-      }
-      else if (playerHands[i].cardResult.handValue > highestHands[j].cardResult.handValue) {
+      } else if (
+        playerHands[i].cardResult.handValue >
+        highestHands[j].cardResult.handValue
+      ) {
         //  console.log("this is larger: ", playerHands[i].cardResult.handValue);
-          console.log("replacing");
+        //  console.log("replacing");
         highestHands = [];
         highestHands.push(playerHands[i]);
 
         // console.log(highestHands.length);
       }
-
-      
-
-      
     }
-  
-  };
+  }
 
-    console.log("highest hands", highestHands);
-    console.log(" temphands: ", highestHands.length);
+  // console.log("highest hands", highestHands);
+  // console.log(" temphands: ", highestHands.length);
+  console.log(playerHands);
 };
-  //step two, iterate new array and check if more than one user has same value card.
+//step two, iterate new array and check if more than one user has same value card.
 
-  // step 3 use shift to sort which user has the best cards.
+// step 3 use shift to sort which user has the best cards.
 
-  //step 4 return the users with the highest card value and highest shift.
-
+//step 4 return the users with the highest card value and highest shift.
 
 ruleManager.analyzeHand = (hand) => {
- // console.log("hand: ", hand);
+  // console.log("hand: ", hand);
   let faces = hand.map((card) => FACES.indexOf(card.slice(0, -1)));
   let suits = hand.map((card) => SUITS.indexOf(card.slice(-1)));
 
   //calcaulating flush by comparing if all index is same value
- // let flush = suits.every((suit) => suit === suits[0]);
-  
+  // let flush = suits.every((suit) => suit === suits[0]);
 
- //------------------------------------------------
- //FlushCalculator
- //------------------------------------------------
-flush = flushCalculator();
-function flushCalculator(){
-  let uniqueSuits = [...new Set(suits)];
-  const suitCounts = uniqueSuits.map(suitValue => [suitValue, suits.filter(suit => suit === suitValue).length]);
-  
-  for (let i = 0; i < suitCounts.length; i++) {
-    if (suitCounts[i][1] >= 5) {
-      console.log("we got a flush!");
-      return true;
+  //-------------------------------------------------
+  //check if first card is an ace
+  //-------------------------------------------------
+  function AceSplitter() {
+    let ace = hand[0];
+    let splittedAce = ace.split("");
+    let indexNumber = SUITS.findIndex((element) => element == splittedAce[1]);
+    console.log("splitted value: ", indexNumber);
+    return indexNumber;
+  }
+
+  //-------------------------------------------------
+  //-------------------------------------------------
+
+  //------------------------------------------------
+  //Flush Calculator
+  //------------------------------------------------
+  let suitType;
+  flush = flushCalculator();
+  function flushCalculator() {
+    let uniqueSuits = [...new Set(suits)];
+    const suitCounts = uniqueSuits.map((suitValue) => [
+      suitValue,
+      suits.filter((suit) => suit === suitValue).length,
+    ]);
+    for (let i = 0; i < suitCounts.length; i++) {
+      if (suitCounts[i][1] >= 5) {
+        console.log("we got a flush!");
+          suitType = suitCounts[i][0];
+        
+        console.log("SuitCountInFlushCalculator: ",suitCounts[i][0]);
+        console.log("suitcounts: ", suitCounts);
+        return true;
+      }
     }
   }
-}
-//------------------------------------------------
-//------------------------------------------------
-
-
+  //------------------------------------------------
+  //------------------------------------------------
 
   //Counting grouped cards of same faces. Creates a shallow copy of FACES array and grouping by value, from index 0
   let groups = FACES.map((face, i) => faces.filter((j) => i === j).length).sort(
@@ -142,13 +155,13 @@ function flushCalculator(){
   let shifted = faces.map((x) => (x + 1) % 13);
 
   // second, the distance between the smallest card value and largest card value is calculated.
-  let distance = Math.min(
-    Math.max(...faces) - Math.min(...faces),
-    Math.max(...shifted) - Math.min(...shifted)
-  );
+  // let distance = Math.min(
+  //   Math.max(...faces) - Math.min(...faces),
+  //   Math.max(...shifted) - Math.min(...shifted)
+  // );
 
   //-------------------------------------------------
-  //Counting straight
+  //Straight calculator
   //-------------------------------------------------
   shifted.sort(function (a, b) {
     return a - b;
@@ -159,30 +172,64 @@ function flushCalculator(){
   for (let i = 0; i < shifted.length; i++) {
     let currentValue = shifted[i];
     let nextValue = shifted[i + 1];
+    //console.log("current value ", currentValue);
+    if (i + 1 == shifted.length) {
+      nextValue = shifted[i] + 1;
+    }
+
+    // let previousValue = shifted[i-1];
     if (nextValue == currentValue + 1) {
       counter++;
-    }
-    if (counter >= 5) {
-     // console.log("We have a straight right here in nomans land");
+
+      //console.log("Counting! ", currentValue);
     }
   }
+
+  // //check if last card has value 12
+  // if(shifted[6] == 12)
+  // {
+  //   if(shifted[0] == 0)
+  //   {
+  //     counter++;
+  //   }
+  // }
+
   let highestStraight = false;
   if (shifted[6] == 12 && shifted[0] == 0 && counter >= 4) {
     highestStraight = true;
     //then straight
-    console.log("straight!");
+    console.log("highest Straight!");
+    //console.log("counter: ", counter);
+  }
+
+  // let straight = groups[0] === 1 && distance < 5;
+  let straight =
+    (groups[0] > 0 && counter >= 5) || (groups[0] > 0 && highestStraight);
+
+  //check if Ace has same type as flush
+  let sameAceTypeAsFlush = false;
+  let aceSuiteType;
+  if (highestStraight) {
+    aceSuiteType = AceSplitter();
+    console.log("suit type: ", suitType);
+    console.log("original suits: ", SUITS);
+    aceSuiteType = SUITS[suitType];
+    console.log(
+      "-------------------------------This is the type of the ace",aceSuiteType
+    );
+    if (suitType == aceSuiteType) {
+      sameAceTypeAsFlush = true;
+      console.log("ace type is same as flush: ", sameAceTypeAsFlush);
+    }
   }
 
   //-------------------------------------------------
   //-------------------------------------------------
 
   // finally, if index 0 has value 1 and  the distance is less than 5 straight is true.
-  console.log("distance: ", distance);
+  //console.log("distance: ", distance);
 
-  // let straight = groups[0] === 1 && distance < 5;
-  let straight =
-    (groups[0] > 0 && groups[0] < 4 && counter >= 5) || highestStraight;
-
+  console.log("is it straight: ", straight + " Counter: " + counter);
   console.log("groups: ", groups);
 
   console.log("shifted[0]: ", shifted[0]);
@@ -192,12 +239,15 @@ function flushCalculator(){
   console.log("shifted[4]: ", shifted[4]);
   console.log("shifted[5]: ", shifted[5]);
   console.log("shifted[6]: ", shifted[6]);
+  console.log(
+    "-----------------------------------------------------------------------------------"
+  );
 
   //analysing hand, returns string with hand title
   let result =
-    straight && flush && shifted[4] === 0
+    straight && flush && highestStraight == true
       ? { handName: "Royal-straight-flush", handValue: 10, shift: shifted }
-      : straight && flush
+      : straight && flush && highestStraight == false
       ? { handName: "straight-flush", handValue: 9, shift: shifted }
       : groups[0] === 4
       ? { handName: "four-of-a-kind", handValue: 8, shift: shifted }
@@ -205,7 +255,7 @@ function flushCalculator(){
       ? { handName: "full-house", handValue: 7, shift: shifted }
       : flush
       ? { handName: "flush", handValue: 6, shift: shifted }
-      : straight
+      : straight || highestStraight
       ? { handName: "straight", handValue: 5, shift: shifted }
       : groups[0] === 3
       ? { handName: "three-of-a-kind", handValue: 4, shift: shifted }

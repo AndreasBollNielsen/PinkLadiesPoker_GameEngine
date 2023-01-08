@@ -132,7 +132,7 @@ app.get('/api/ruleManagerTest', (req,res) => {
  //Creating a testPokerTable object
  //-----------------------------------------------
 // testPocketCards=[["aH", "3D"],["2H", "kD"],["jH", "qD"],["jH", "jD"],["2H", "aH"],["3H", "aD"]]
-testPocketCards=[["8D", "9H"],["aH", "9D"],["aD", "9S"],["aS", "9C"],["8D", "4C"]]
+testPocketCards=[["8D", "9H"],["aH", "9D"],["aD", "8C"],["aS", "9C"],["aC", "4C"]]
 
 //testing compare hands
 let pokerTable = new PokerTable();
