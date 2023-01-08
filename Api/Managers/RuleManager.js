@@ -114,7 +114,8 @@ ruleManager.analyzeHand = (hand) => {
     let ace = hand[0];
     let splittedAce = ace.split("");
     let indexNumber = SUITS.findIndex((element) => element == splittedAce[1]);
-    console.log("splitted value: ", indexNumber);
+    console.log("splitted index: ", indexNumber);
+    console.log("splitted value: ", splittedAce[1]);
     return indexNumber;
   }
 
@@ -125,23 +126,28 @@ ruleManager.analyzeHand = (hand) => {
   //Flush Calculator
   //------------------------------------------------
   let suitType;
-  flush = flushCalculator();
+  let suitCounts;
+  let flush = flushCalculator();
   function flushCalculator() {
     let uniqueSuits = [...new Set(suits)];
-    const suitCounts = uniqueSuits.map((suitValue) => [
+    suitCounts = uniqueSuits.map((suitValue) => [
       suitValue,
       suits.filter((suit) => suit === suitValue).length,
     ]);
     for (let i = 0; i < suitCounts.length; i++) {
       if (suitCounts[i][1] >= 5) {
         console.log("we got a flush!");
-          suitType = suitCounts[i][0];
-        
-        console.log("SuitCountInFlushCalculator: ",suitCounts[i][0]);
+        suitType = suitCounts[i][0];
+
+        //console.log("suiteType: ", suitType);
+
+        //console.log("SuitCountInFlushCalculator: ",suitCounts[i][0]);
         console.log("suitcounts: ", suitCounts);
         return true;
       }
     }
+
+    return false;
   }
   //------------------------------------------------
   //------------------------------------------------
@@ -153,13 +159,8 @@ ruleManager.analyzeHand = (hand) => {
 
   //calculating straight by first calculating the remainder of the value + 1 divided by 13.
   let shifted = faces.map((x) => (x + 1) % 13);
-
-  // second, the distance between the smallest card value and largest card value is calculated.
-  // let distance = Math.min(
-  //   Math.max(...faces) - Math.min(...faces),
-  //   Math.max(...shifted) - Math.min(...shifted)
-  // );
-
+let shiftedFlusher = faces.map((x) => (x + 1) % 13);
+console.log("shifted flusher ",shiftedFlusher);
   //-------------------------------------------------
   //Straight calculator
   //-------------------------------------------------
@@ -185,15 +186,6 @@ ruleManager.analyzeHand = (hand) => {
     }
   }
 
-  // //check if last card has value 12
-  // if(shifted[6] == 12)
-  // {
-  //   if(shifted[0] == 0)
-  //   {
-  //     counter++;
-  //   }
-  // }
-
   let highestStraight = false;
   if (shifted[6] == 12 && shifted[0] == 0 && counter >= 4) {
     highestStraight = true;
@@ -205,21 +197,95 @@ ruleManager.analyzeHand = (hand) => {
   // let straight = groups[0] === 1 && distance < 5;
   let straight =
     (groups[0] > 0 && counter >= 5) || (groups[0] > 0 && highestStraight);
-
+  let aceSuiteTypeLetter;
   //check if Ace has same type as flush
   let sameAceTypeAsFlush = false;
   let aceSuiteType;
   if (highestStraight) {
     aceSuiteType = AceSplitter();
+    console.log("Acesuit type: ", aceSuiteType);
     console.log("suit type: ", suitType);
     console.log("original suits: ", SUITS);
-    aceSuiteType = SUITS[suitType];
+    aceSuiteTypeLetter = SUITS[aceSuiteType];
     console.log(
-      "-------------------------------This is the type of the ace",aceSuiteType
+      "-------------------------------This is the type of the ace",
+      aceSuiteTypeLetter
     );
-    if (suitType == aceSuiteType) {
+    if (SUITS[suitType] == aceSuiteTypeLetter) {
       sameAceTypeAsFlush = true;
       console.log("ace type is same as flush: ", sameAceTypeAsFlush);
+    }
+  }
+
+  //-------------------------------------------------
+  //-------------------------------------------------
+
+  //-------------------------------------------------
+  //Anti Straight Flush calculator
+  //-------------------------------------------------
+
+  if (counter >= 4) {
+    if (flush) {
+      let flushSuit;
+      for (let i = 0; i < suitCounts.length; i++) {
+        if (suitCounts[i][1] >= 5) {
+          flushSuit = suitCounts[i][0];
+        }
+      }
+
+      let suitLetter = SUITS[flushSuit];
+      console.log("suitLetter: ", suitLetter);
+      let shallowCards = [];
+      for (let i = 0; i < hand.length; i++) {
+        let card = hand[i].split("");
+
+        let cardObject = {
+          shifted: shiftedFlusher[i],
+          cardSuit: card[card.length - 1],
+        };
+        shallowCards.push(cardObject);
+
+        // if(card[card.length-1] == aceSuiteTypeLetter)
+        // for (let j = 0; j < cardObject.length; j++) {
+
+        //   if(shallowCards[i] == )
+        // }
+      }
+      tempArray = [];
+      for (let index = 0; index < shallowCards.length; index++) {
+       // console.log("cardSuit:", shallowCards[index].cardSuit + " / suitletter: " + suitLetter);
+        if (shallowCards[index].cardSuit == suitLetter) {
+          tempArray.push(shallowCards[index].shifted);
+        }
+      }
+
+      console.log("temp array length: ", tempArray.length);
+      console.log("TempArray: before sorting: ", tempArray);
+
+      tempArray.sort(function (a, b) {
+        return a - b;
+      });
+
+      console.log("TempArray: ascending order: ", tempArray);
+
+      let counter1 = 0;
+      for (let i = 0; i < tempArray.length; i++) {
+        let currentValue = tempArray[i];
+        let nextValue = tempArray[i + 1];
+        //console.log("current value ", currentValue);
+        if (i + 1 == tempArray.length) {
+          nextValue = tempArray[i] + 1;
+        }
+
+        // let previousValue = shifted[i-1];
+        if (nextValue == currentValue + 1) {
+          counter1++;
+
+          //console.log("Counting! ", currentValue);
+        }
+      }
+      //console.log("shallowCards: ", shallowCards);
+      console.log("shallowCardsCounter: ", counter1);
     }
   }
 
@@ -229,8 +295,17 @@ ruleManager.analyzeHand = (hand) => {
   // finally, if index 0 has value 1 and  the distance is less than 5 straight is true.
   //console.log("distance: ", distance);
 
-  console.log("is it straight: ", straight + " Counter: " + counter);
-  console.log("groups: ", groups);
+  console.log(
+    "is it straight: ",
+    straight +
+      ", flush: " +
+      flush +
+      ", is ace same: " +
+      sameAceTypeAsFlush +
+      ", higest straight: " +
+      highestStraight
+  );
+  // console.log("groups: ", groups);
 
   console.log("shifted[0]: ", shifted[0]);
   console.log("shifted[1]: ", shifted[1]);
@@ -245,15 +320,15 @@ ruleManager.analyzeHand = (hand) => {
 
   //analysing hand, returns string with hand title
   let result =
-    straight && flush && highestStraight == true
+    straight && flush && highestStraight && sameAceTypeAsFlush
       ? { handName: "Royal-straight-flush", handValue: 10, shift: shifted }
-      : straight && flush && highestStraight == false
+      : straight && flush && !sameAceTypeAsFlush
       ? { handName: "straight-flush", handValue: 9, shift: shifted }
       : groups[0] === 4
       ? { handName: "four-of-a-kind", handValue: 8, shift: shifted }
       : groups[0] === 3 && groups[1] === 2
       ? { handName: "full-house", handValue: 7, shift: shifted }
-      : flush
+      : flush && !sameAceTypeAsFlush && straight
       ? { handName: "flush", handValue: 6, shift: shifted }
       : straight || highestStraight
       ? { handName: "straight", handValue: 5, shift: shifted }
