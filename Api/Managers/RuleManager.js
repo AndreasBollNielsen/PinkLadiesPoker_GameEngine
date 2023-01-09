@@ -161,6 +161,8 @@ ruleManager.analyzeHand = (hand) => {
   let shifted = faces.map((x) => (x + 1) % 13);
 let shiftedFlusher = faces.map((x) => (x + 1) % 13);
 console.log("shifted flusher ",shiftedFlusher);
+
+
   //-------------------------------------------------
   //Straight calculator
   //-------------------------------------------------
