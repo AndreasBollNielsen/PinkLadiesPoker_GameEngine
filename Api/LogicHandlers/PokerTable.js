@@ -1,44 +1,54 @@
 const CleaningLady = require('./CleaningLady');
-let PokerTable = class{
+class PokerTable {
 
-    
-     users =[];
-     bets =[];
-     collectiveCards =[];
-     cardDeck =[];
-    dealer;
-     constructor(){
 
-     };
-    
-     UpdateUserState = (action,value) =>{
-        
-        
-    }
-    
-    LeavePokerTable = (userID) =>{
-        
-        
-    }
-    
-    AddToPokerTable = (user) =>{
-        
-        
+     users = [];
+     bets = [];
+     collectiveCards = [];
+     cardDeck = [];
+     dealer;
+
+
+     AddRoles = () => {
+
+
     }
 
-    VerifyOrKickPlayer = () =>{
-        
+     DealPocketCards = () => {
+
+
+    }
+
+     UpdateUserState = (action, value) => {
+
+
+    }
+
+   
+
+     SetCurrentUser = () => {
+
+
+    }
+
+     VerifyOrKickPlayer = () => {
+
         for (let index = 0; index < users.length; index++) {
-           
-            //kick player
-            if(users[index].Saldo ===0)
-            {
 
+            //kick player
+            if (users[index].Saldo === 0) {
+
+                CleaningLady.MoveUserToWaitingUsers(users[index].userID);
             }
-            
+
         }
     }
-    
+
+     LeavePokerTable = (userID) => {
+
+
+    }
+
 };
 
-module.exports = PokerTable;
+//module.exports = PokerTable;
