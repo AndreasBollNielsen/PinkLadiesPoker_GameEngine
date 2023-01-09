@@ -36,10 +36,17 @@ app.get('/api/GetAES',(req,res) => {
 //create new user
 app.post('/api/CreateUser', (req,res) => {
 
-  const encryptedUser = req.body.userName;
+  //test encrypted user
+  const userName = req.body.userName;
+const encrypted = encryption.EncryptAES(userName);
 
-  const decryptedUser = encryption.DecryptAES(encryptedUser);
+
+ 
+const decryptedUser = encryption.DecryptAES(encrypted);
+console.log(decryptedUser);
   lobby.CreateUser(decryptedUser);
+
+  console.log("poker tables: ",lobby.pokerTables);
 
   res.status(200).send("user created!");
 
@@ -101,7 +108,7 @@ app.get('/api/ruleManagerTest', (req,res) => {
 
   const ruleManager = require('./Managers/RuleManager.js');
   const PokerTable =  require('./LogicHandlers/PokerTable');
-  const User = require('./Models/User');
+ // const User = require('./Models/User');
   
   let hand8= ["2H", "2D", "2C", "kD", "kD", "10D", "3C"];//full house
   let hand7= ["2D", "3D", "4D", "5D", "8D", "10H", "kC"];//flush
