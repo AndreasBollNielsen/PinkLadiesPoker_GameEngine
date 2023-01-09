@@ -2,7 +2,7 @@ const crypto = require("crypto");
 let key;
 let iv;
 encryption = {};
-const algorithm= 'aes-256-ecb'; // for use in AES
+const algorithm= 'aes-256-cbc'; // for use in AES
 
 
 //Encrypting the AES key and IV to be sent back to app in RSA encrypted format.
@@ -48,7 +48,8 @@ encryption.CreateAES = () =>{
 //Symetric encryption to be used when both app and api has the AES keys
 encryption.EncryptAES = (dataToEncrypt) =>{
 
-  let cipher = crypto.createCipheriv(algorithm,Buffer.from(key),iv);
+  
+  let cipher = crypto.createCipheriv("aes-256-cbc",key,iv);
   let encryptedData = cipher.update(dataToEncrypt);
   
   encryptedData = Buffer.concat([encryptedData,cipher.final()]);
@@ -56,19 +57,20 @@ encryption.EncryptAES = (dataToEncrypt) =>{
   //send to websocket
 
   console.log('encrypted data: ', encryptedData.toString('hex'));
-
+  return encryptedData;
 }
 
 
 
 encryption.DecryptAES = (dataToDecrypt) =>{
 
-  let iv= Buffer.from(text.iv, 'hex');
-  let encryptedText = Buffer.from(text.dataToDecrypt, 'hex');
-  let decipher = crypto.createDecipheriv(algorithm, Buffer.from(key), iv);
-  let decryptedData = decipher.update(encryptedText);
-  decryptedData= Buffer.concat([decryptedData, decipher.final()]);
-  return decrypted.toString();
+  console.log(dataToDecrypt);
+  //let iv= Buffer.from(iv, 'hex');
+  let encryptedText = Buffer.from(dataToDecrypt, 'hex');
+  let decipher = crypto.createDecipheriv(algorithm, key, iv);
+  let decryptedData = decipher.update(encryptedText,"hex", "utf-8");
+  decryptedData += decipher.final("utf8");
+  return decryptedData.toString();
 
 
 }
