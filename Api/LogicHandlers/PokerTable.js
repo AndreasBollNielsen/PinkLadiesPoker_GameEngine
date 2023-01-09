@@ -6,7 +6,7 @@ let PokerTable = class{
      bets =[];
      collectiveCards =[];
      cardDeck =[];
-
+    dealer;
      constructor(){
 
      };

@@ -1,4 +1,5 @@
-let User = class{
+
+  class User{
     UserID;
     UserName; 
     Saldo;
@@ -10,5 +11,5 @@ let User = class{
     }
 }
 
-module.exports = User;
+
 
